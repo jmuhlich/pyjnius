@@ -156,7 +156,7 @@ with open(join('jnius', '__init__.py')) as fd:
     version = versionline[0].split("'")[-2]
 
 # create the extension
-setup(name='jnius',
+setup(name='jnius_indra',
       version=version,
       cmdclass={'build_ext': build_ext},
       packages=['jnius'],
@@ -181,7 +181,7 @@ setup(name='jnius',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
-        'Operating System :: MacOS :: OS X',
+        'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python :: 2.6',

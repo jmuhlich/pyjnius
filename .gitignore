@@ -10,3 +10,6 @@ build
 *~
 *.so
 *.iml
+/MANIFEST
+/dist
+/*.egg-info
