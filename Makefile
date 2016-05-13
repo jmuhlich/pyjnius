@@ -17,7 +17,7 @@ ANT=ant
 
 build_ext:
 	$(ANT) all
-	$(PYTHON) setup.py build_ext --inplace -f -g
+	$(PYTHON) setup-dev.py build_ext --inplace -f -g
 
 clean:
 	$(ANT) clean
