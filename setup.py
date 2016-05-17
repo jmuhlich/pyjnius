@@ -1,10 +1,8 @@
 from __future__ import print_function
 try:
     from setuptools import setup, Extension
-    from setuptools.command.build_ext import build_ext
 except ImportError:
     from distutils.core import setup, Extension
-    from distutils.command.build_ext import build_ext
 from os import environ
 from os.path import dirname, join, exists
 import sys
@@ -22,6 +20,19 @@ def getenv(key):
                 return val
     return val
 
+files = [
+    'jni.pxi',
+    'jnius_conversion.pxi',
+    'jnius_export_class.pxi',
+    'jnius_export_func.pxi',
+    'jnius_jvm_android.pxi',
+    'jnius_jvm_desktop.pxi',
+    'jnius_jvm_dlopen.pxi',
+    'jnius_localref.pxi',
+    'jnius.pyx',
+    'jnius_utils.pxi',
+]
+
 libraries = []
 library_dirs = []
 lib_location = None
@@ -34,6 +45,22 @@ platform = sys.platform
 ndkplatform = getenv('NDKPLATFORM')
 if ndkplatform is not None and getenv('LIBLINK'):
     platform = 'android'
+
+# detect cython
+try:
+    from Cython.Distutils import build_ext
+    install_requires.append('cython')
+except ImportError:
+    try:
+        from setuptools.command.build_ext import build_ext
+    except ImportError:
+        from distutils.command.build_ext import build_ext
+    if platform != 'android':
+        print('\n\nYou need Cython to compile Pyjnius.\n\n')
+        raise
+    # On Android we expect to see 'c' files lying about.
+    # and we go ahead with the 'desktop' file? Odd.
+    files = [fn[:-3] + 'c' for fn in files if fn.endswith('pyx')]
 
 if platform == 'android':
     # for android, we use SDL...
@@ -55,7 +82,6 @@ elif platform == 'darwin':
     else:
         lib_location = 'jre/lib/server/libjvm.dylib'
         include_dirs = ['{0}/include'.format(framework), '{0}/include/darwin'.format(framework)]
-    extra_link_args += ['-framework', 'JavaVM']
 else:
     import subprocess
     # otherwise, we need to search the JDK_HOME
@@ -144,7 +170,7 @@ setup(name='jnius_indra',
       ext_package='jnius',
       ext_modules=[
           Extension(
-              'jnius', [join('jnius', 'jnius.c')],
+              'jnius', [join('jnius', x) for x in files],
               libraries=libraries,
               library_dirs=library_dirs,
               include_dirs=include_dirs,

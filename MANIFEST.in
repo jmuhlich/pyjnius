@@ -1,5 +1,2 @@
 include *COPYING
 recursive-include jnius *.pyx *.pxi
-include jnius/jnius.c
-exclude setup-dev.py
-include setup.py
